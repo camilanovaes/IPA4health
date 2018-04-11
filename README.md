@@ -1,10 +1,11 @@
 # UFPA Projetos 3: Intelligent Personal Assistant for Health.
 
     * Hardware: (Gustavo)
-       - Micro: Rasp pi
-       - Modulo Myoware;
-       - NFC;
-       - 
+       - Microcontrolador: Raspberry pi 3 (Conter a IA para o projeto)
+       - Myoware (análise de sinais EMG);
+       - NFC (Armazenamento de dados do usuário);
+       - Display lcd tft 1.8 128x126 (Interface de interação com o usuário);
+       - Sensor de frequência cardíaca e Oxímetro (bem intuitivo).
 
     * Design: (Pablo)
        - Arte visual
