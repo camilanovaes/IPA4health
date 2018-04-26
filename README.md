@@ -13,18 +13,16 @@
             |- Obs: Colocar um LCD;
 
     * Software: (Camila)
-        - Mobile App;
-        - Intelligent Personal Assistant (IPA)
-            |- Definir as funções: Reconhecimento de voz, QA;
-            |- 
+        - Mobile App (?);
+        - Intelligent Personal Assistant (IPA): Mycroft [https://mycroft.ai/]
+            |- Definir as skills;
+            |- Trocar linguagem para PT-BR
 
         - Database (Para as funcionalidades abaixo) -> Cloud;
-        - 
 
     * Funcionalidades:
         - Agendamento de lembretes (Consultas, Medicamentos, Bebe water, Cultura saude)
             |- Medicamentos: Horários, Dosagem, Periodo (Duração); -> Banco de dados;
             |- Cultura saude: Práticas saudaveis diarias;
-            |- 
 
         - Monitoramento dos sinais biologicos;
