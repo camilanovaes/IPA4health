@@ -46,4 +46,4 @@ Testes Finais | | | | | | | | | | | | | | | x| x| x| x|
             |- Medicamentos: Horários, Dosagem, Periodo (Duração); -> Banco de dados;
             |- Cultura saude: Práticas saudaveis diarias;
 
-        - Monitoramento dos sinais biologicos;
+        - Monitoramento de parâmetros fisiológicos;
