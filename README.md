@@ -1,4 +1,4 @@
-# UFPA Projetos 3: Intelligent Personal Assistant for Health.
+# UFPA Projetos 3: Intelligent Virtual Assistant for Health.
 
 ## Cronograma
 
