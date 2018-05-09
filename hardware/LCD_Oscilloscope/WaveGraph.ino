@@ -64,7 +64,7 @@ void setup() {
 
 void loop(void) {
   for (x = 0; x <= 80; x +=.1) {
-    y = analogRead(ADJ_PIN) * (10.0 / 1023.0);
+    y = analogRead(ADJ_PIN) * (5.0 / 1023.0);
     Graph(tft, x, y, 40, 95, 95, 80, 0, 60, 15, 0, 5, 1, "", "Tempo(s)", "Tensao(v)", DKBLUE, RED, GREEN, WHITE, BLACK, display1);
     delay(10);
   }
