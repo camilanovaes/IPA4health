@@ -1,0 +1,22 @@
+Water Reminder Skill:
+ - Add Pessoa; (Cada pessoa tem q seu próprio dados)
+    |- Nome;
+    |- Sexo; (Para o calculo de copos de água)
+    |- Idade; (Para o calculo de copos de água)
+ - Rm Pessoa;
+
+ - Lembretes (É necessário ativar um lembrete);
+ - Stop ()
+
+#Tabela:
+______________________________________________________________
+|        Demographic       |     Amount of water (Daily)      |
+| children 4–8 years old   | 5 cups, or 40 total ounces       |
+| children 9–13 years old  | 7–8 cups, or 56–64 total ounces  |
+| children 14–18 years old | 8–11 cups, or 64–88 total ounces |
+| men, 19 years and older  | 13 cups, or 104 total ounces     |
+| women, 19 years and older| 9 cups, or 72 total ounces       |
+---------------------------------------------------------------
+
+Referência:
+- https://www.healthline.com/health/how-much-water-should-I-drink#recommendations
