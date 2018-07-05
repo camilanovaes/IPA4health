@@ -55,7 +55,7 @@ int iSampleCount = 0; // Holds the incremental counter to be compared with that 
 int iSampleCountMax = 8; // This number dictates how many samples are thrown away before the screen is updated
 uint32_t tsLastReport = 0;
 
-#define REPORTING_PERIOD_MS 250
+#define REPORTING_PERIOD_MS 1000
 #define SAMPLE_PERIOD_uS    1000 
 #define MAX_UL 4294967295UL
 unsigned long ulSamplePeriod = SAMPLE_PERIOD_uS;
@@ -79,7 +79,6 @@ void setup() {
 
 
 void loop() {
- while(Serial.available()) {
   
   char buff = Serial.read();
 
@@ -89,6 +88,7 @@ void loop() {
    break;
 
    case 's':
+   tft.setRotation(3);
     Serial.println("START");
     handleCalibration();
     setupFinalDisplay();
@@ -181,13 +181,11 @@ void loop() {
    break;
 
    default:
+   tft.setRotation(0);
     bmo_speak();
-    delay(1000);
-    bmo_speak2();
     delay(1000);
    break;
   }
- }
 }
 
 
@@ -213,11 +211,11 @@ void handleCalibration(void){
   long  lADC0TempValue = 0;
   long  lSamplecounts = 0;
   uint16_t ir, red;
+
   
   iCountDown = CALIBRATION_DELAY;
   setupCalibrateDisplay1();
   tft.setTextSize(1);
-  
   while (iCountDown > 0){  
     tft.setTextColor(ST7735_WHITE);
     tft.setCursor(110,100);
