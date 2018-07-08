@@ -79,7 +79,6 @@ void setup() {
 
 
 void loop() {
-  
   char buff = Serial.read();
 
   switch(buff) {
@@ -162,7 +161,7 @@ void loop() {
         if (ucScreenIndex >= SCREEN_WIDTH) {
          ucScreenIndex = 1;
          iPulseValueIROld = (int)((float)((float)PULSE_WINDOW_HEIGHT) / 2.0);
-         tft.drawFastVLine(ucScreenIndex, 1, PULSE_WINDOW_HEIGHT - 3, ST7735_BLACK);
+         tft.drawFastVLine(ucScreenIndex, 1, PULSE_WINDOW_HEIGHT - 3, ST7735_BLACK); // drawFastVLine: Draw Fast Vertical Line; drawFastHLine: Draw Fast Horizontal Line
         }else {
          if (ucScreenIndex < (SCREEN_WIDTH-2)) {
           tft.drawFastVLine(ucScreenIndex, 1, PULSE_WINDOW_HEIGHT - 3, ST7735_BLACK);
@@ -182,14 +181,13 @@ void loop() {
 
    default:
    tft.setRotation(0);
-    bmo_speak();
-    delay(1000);
+    bmo_smile();
    break;
   }
 }
 
 
-void UpdateValues(int x, int y, int OldValue, int NewValue){
+void UpdateValues(int x, int y, int OldValue, int NewValue) {
   tft.setTextSize(2);
   tft.setCursor(x, y);
   tft.setTextColor(ST7735_BLACK);
@@ -202,7 +200,7 @@ void UpdateValues(int x, int y, int OldValue, int NewValue){
 }
 
 
-void handleCalibration(void){
+void handleCalibration() {
 #define CALIBRATION_DELAY 10
 
   int lCount = 0;
@@ -277,7 +275,7 @@ void handleCalibration(void){
 }
 
 
-void setupCalibrateDisplay1(void){
+void setupCalibrateDisplay1() {
   tft.fillScreen(ST7735_BLACK);
   tft.setCursor(35, 5);
   tft.setTextColor(ST7735_YELLOW);
@@ -300,7 +298,7 @@ void setupCalibrateDisplay1(void){
 }
 
 
-void setupCalibrateDisplay2(void){
+void setupCalibrateDisplay2() {
   tft.fillScreen(ST7735_BLACK);
   tft.setTextColor(ST7735_YELLOW);
   tft.setTextSize(2);
@@ -311,7 +309,7 @@ void setupCalibrateDisplay2(void){
 }
 
 
-void setupFinalDisplay(void){
+void setupFinalDisplay() {
   tft.fillScreen(ST7735_BLACK);
   tft.drawRect(0, 0, SCREEN_WIDTH-1, PULSE_WINDOW_HEIGHT-1, ST7735_GREEN);
   tft.drawRect(0, PULSE_WINDOW_HEIGHT, SCREEN_WIDTH-1, SCREEN_HEIGHT - PULSE_WINDOW_HEIGHT, ST7735_GREEN);
@@ -326,21 +324,18 @@ void setupFinalDisplay(void){
 }
 
 
-void bmo_hello()
-{
-  uint16_t x=31;
+void bmo_hello() {
+  uint16_t x=34;
   uint16_t y=40;
-  uint16_t R=5;
-  uint16_t r=3;
+  uint16_t R=6;
+  uint16_t r=4;
   tft.fillCircle(x, y, r, BLACK);
   tft.fillCircle(x, y*3, r, BLACK);
   //fillCircle(uint16_t x0, uint16_t y0, uint16_t r, uint16_t color);
   tft.fillCircle(x*2, y*2, R, BLACK);
-
 }
 
-void bmo_greeting()
-{
+void bmo_greeting() {
   //void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
   uint16_t x=31;
   uint16_t y=40;
@@ -350,8 +345,7 @@ void bmo_greeting()
   tft.drawLine(x*2,y+5,x*2,y*2.8,BLACK);
 }
 
-void bmo_ow()
-{
+void bmo_ow() {
   //void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
   uint16_t x=31;
   uint16_t y=40;
@@ -361,57 +355,82 @@ void bmo_ow()
   tft.drawCircle(x*2,y*2,r*4,BLACK);
 }
 
-void bmo_smile()
-{
-  uint16_t x=31;
-  uint16_t y=40,r=3;
+void bmo_smile() {
+  uint16_t x=34;
+  uint16_t y=40,r=4;
 
   eyes1(x,y,r);
+
+//Lado Direito
+//tft.fillRoundRect(x*2, y+5, altura, comprimento, angulo das laterais, BLACK);
+   tft.fillRoundRect((x*2), (y+2)-2, 4, 10, 1, BLACK); //posicao inicial
+   tft.fillRoundRect((x*2)+2, (y+5), 4, 4, 1, BLACK);   // x + 2 ; y + 3
+   for(int i = 2; i<7; i = i+2)
+    tft.fillRoundRect((x*2)+1+i, (y+5)+i-1, 4, 4, 1, BLACK);
+
+   tft.fillRoundRect((x*2)+9, (y+5)+7, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+11, (y+5)+9, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+12, (y+5)+10, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+13, (y+5)+12, 5, 4, 1, BLACK);
    
-   tft.drawLine(x*2,y+5,x*2.3,y*1.6,BLACK);
-   tft.drawLine(x*2.3,y*2.3,x*2,y*2.8,BLACK);
+   tft.fillRoundRect((x*2)+15, (y+5)+14, 4, 8, 1, BLACK);
+
+   tft.fillRoundRect((x*2)+16, (y+5)+20, 4, 12, 1, BLACK);
+   tft.fillRoundRect((x*2)+16, (y+5)+29, 4, 12, 1, BLACK);
    
-   tft.drawLine(x*2.3,y*1.6,x*2.3,y*2.3,BLACK);
+//Lado Esquerdo   
+   tft.fillRoundRect((x*2)-1,(y*3)-2, 4, 10, 1, BLACK); //posicao inicial
+   tft.fillRoundRect((x*2)+1, (y*3)-1, 4, 4, 1, BLACK);  
+   for(int i = 2; i<7; i = i+2)
+    tft.fillRoundRect((x*2)+1+i, (y*3)-1-i, 4, 4, 1, BLACK);
+
+   tft.fillRoundRect((x*2)+9, (y*3)-9, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+11, (y*3)-11, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+12, (y*3)-12, 4, 4, 1, BLACK);
+   tft.fillRoundRect((x*2)+13, (y*3)-14, 5, 4, 1, BLACK);
+
+    tft.fillRoundRect((x*2)+15, (y*3)-20, 4, 8, 1, BLACK);
+
+    tft.fillRoundRect((x*2)+16, (y*3)-28, 4, 10, 1, BLACK);
+    tft.fillRoundRect((x*2)+16, (y*3)-36, 4, 11, 1, BLACK);
 }
 
-void idk()
-{
-
+void idk() {
  tft.setRotation(3);
  uint8_t tz=2;
  uint16_t v=10;
-  tft.drawChar(5, v, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(26, v, 'U', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(50, v, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(74, v, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(98, v, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(115, v, 'A', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(133, v, 'P', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(5, v, 'B', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(26, v, 'A', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(50, v, 'C', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(74, v, 'K', CHARCOL, BMO_COLOR, tz);
   
-  tft.drawChar(5, 42, 'P', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(29, 42, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(53, 42, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(77, 42, 'D', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(101, 42, 'F', CHARCOL, BMO_COLOR, tz);    
-  tft.drawChar(125, 42, 'G', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(98, v, 'I', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(115, v, 'N', CHARCOL, BMO_COLOR, tz);
+  
+  tft.drawChar(133, v, '1', CHARCOL, BMO_COLOR, tz);
+  
+  tft.drawChar(5, 42, 'M', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(29, 42, 'I', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(53, 42, 'N', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(77, 42, 'U', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(101, 42, 'T', CHARCOL, BMO_COLOR, tz);    
+  tft.drawChar(125, 42, 'E', CHARCOL, BMO_COLOR, tz);
 }
 
-void bmo_speak()
-{
+void bmo_speak() {
   uint16_t x=31;
   uint16_t y=40;
   uint16_t R=5;
   uint16_t r=3;
-   tft.fillRect(0,0,x*1.8,y*4,BMO_COLOR);
+  tft.fillRect(0,0,x*1.8,y*4,BMO_COLOR);
   tft.fillCircle(x*1.7, y*2, r*10, BLACK);
   tft.fillRect(0,0,x*1.8,y*4,BMO_COLOR);
   tft.fillRoundRect(x*2.3, y*1.8, 11, 18, 3, RED);
   eyes1(x,y,r);
   //tft.fillRect(x*2.1,0,x*3,y*4,BMO_COLOR);
-
 }
-void bmo_speak2()
-{
+
+void bmo_speak2() {
   uint16_t x=31;
   uint16_t y=40;
   uint16_t R=5;
@@ -422,10 +441,9 @@ void bmo_speak2()
   tft.fillRoundRect(x*2.3, y*1.8, 11, 18, 3, RED);
   eyes1(x,y,r);
   tft.fillRect(x*2.1,0,x*3,y*4,BMO_COLOR);
-
 }
 
-void eyes1(uint16_t x,uint16_t y,uint16_t r){
-  tft.fillCircle(x, y, r, BLACK);
-  tft.fillCircle(x, y*3, r, BLACK);
+void eyes1(uint16_t x,uint16_t y,uint16_t r) {
+  tft.fillCircle(x, y-3, r, BLACK);
+  tft.fillCircle(x, (y*3)+3, r, BLACK);
 }
