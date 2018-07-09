@@ -70,6 +70,8 @@ unsigned long ulPulseOldTime = 0;
 #define RED 0xF800
 #define WHITE 0xFFFF
 #define CHARCOL 0x0000
+#define TONGUE 0x4F8B //8,42,11
+#define MOUTH  0x1BA8
 
 void setup() {
  Serial.begin(115200);
@@ -182,12 +184,12 @@ void loop() {
 
    default:
    tft.setRotation(0);
-    bmo_speak2();
-    delay(1000);
-    tft.fillRect(60, 0, 50, 159, BMO_COLOR);
     bmo_smile();
     delay(1000);
-    tft.fillRect(60, 0, 50, 159, BMO_COLOR);
+    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+    bmo_speak();
+    delay(1000);
+    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
    break;
   }
 }
@@ -336,7 +338,7 @@ void bmo_hello() {
   uint16_t R=6;
   uint16_t r=4;
   
-  eyes1(x,y,r);
+  eyes(x,y,r);
   tft.fillCircle(x*2, y*2, R, BLACK);
 }
 
@@ -346,7 +348,7 @@ void bmo_greeting() {
   uint16_t y=40;
   uint16_t r=4;
 
-  eyes1(x,y,r);
+  eyes(x,y,r);
   tft.drawLine(x*2,y+5,x*2,y*3,BLACK);
 }
 
@@ -356,7 +358,7 @@ void bmo_ow() {
   uint16_t y=40;
   uint16_t r=4;
 
-  eyes1(x,y,r);
+  eyes(x,y,r);
   tft.drawCircle(x*2,y*2,r*4,BLACK);
 }
 
@@ -364,7 +366,7 @@ void bmo_smile() {
   uint16_t x=34;
   uint16_t y=40,r=4;
 
-  eyes1(x,y,r);
+  eyes(x,y,r);
 
 //Lado Direito
 //tft.fillRoundRect(x*2, y+5, altura, comprimento, angulo das laterais, BLACK);
@@ -423,20 +425,6 @@ void idk() {
   tft.drawChar(125, 42, 'E', CHARCOL, BMO_COLOR, tz);
 }
 
-void bmo_speak() {
-  uint16_t x=34;
-  uint16_t y=40;
-  uint16_t R=5;
-  uint16_t r=4;
-
-  //tft.fillRect(0,0,x*2,y*4,BMO_COLOR);
-  tft.fillCircle(x*2, y*2, r*5, BLACK);
-  //tft.fillRect(0,0,x*2,y*4,BMO_COLOR);
-  tft.fillRoundRect(x*2, (y*2)-7, 11, 18, 3, RED);
-  eyes1(x,y,r);
-  //tft.fillRect(x*2.1,0,x*3,y*4,BMO_COLOR);
-}
-
 
 void bmo_troll() {
   uint16_t x=34;
@@ -448,18 +436,18 @@ void bmo_troll() {
   tft.fillCircle(x*2, y*2, r*5, BLACK);
   //tft.fillRect(0,0,x*2,y*4,BMO_COLOR);
   tft.fillRoundRect(x*2, (y*2)-8, 11, 18, 3, RED);
-  eyes1(x,y,r);
+  eyes(x,y,r);
   //tft.fillRect(x*2.1,0,x*3,y*4,BMO_COLOR);
 }
 
 
-void bmo_speak2() {
+void bmo_speak() {
   uint16_t x=34;
   uint16_t y=40;
   uint16_t R=5;
   uint16_t r=4;
 
-    eyes1(x,y,r);
+  eyes(x,y,r);
 
 //Lado Direito
 //tft.fillRoundRect(x*2, y+5, altura, comprimento, angulo das laterais, BLACK);
@@ -495,19 +483,19 @@ void bmo_speak2() {
     tft.fillRoundRect((x*2)+16, (y*3)-43, 4, 11, 1, BLACK);
 
 //Preenchimento da boca
-    tft.fillRect(72, 68, 14, 30, BLACK);
-    tft.fillTriangle(85, 67, 70, 47, 70, 67, BLACK);
-    tft.fillTriangle(85, 97, 70, 117, 70, 97, BLACK);
+    tft.fillRect(72, 68, 14, 30, MOUTH);
+    tft.fillTriangle(85, 67, 70, 52, 70, 67, MOUTH);
+    tft.fillTriangle(85, 97, 70, 112, 70, 97, MOUTH);
 
 //Dentes
-tft.fillRoundRect(70, 56, 6, 53, 1, WHITE);
+tft.fillRoundRect(70, 56, 5, 53, 1, WHITE);
 
 
 //Lingua
-tft.fillRoundRect(80, 65, 5, 35, 1, RED);
+tft.fillRoundRect(80, 65, 5, 35, 1, TONGUE);
 }
 
-void eyes1(uint16_t x,uint16_t y,uint16_t r) {
+void eyes(uint16_t x,uint16_t y,uint16_t r) {
   tft.fillCircle(x, y-3, r, BLACK);
   tft.fillCircle(x, (y*3)+3, r, BLACK);
 }
