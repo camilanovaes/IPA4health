@@ -183,11 +183,11 @@ void loop() {
    default:
    tft.setRotation(0);
     bmo_speak2();
-    delay(500);
+    delay(1000);
     tft.fillRect(60, 0, 50, 159, BMO_COLOR);
     bmo_smile();
-    delay(500);
-    tft.fillRect(30, 0, 20, 159, BMO_COLOR);
+    delay(1000);
+    tft.fillRect(60, 0, 50, 159, BMO_COLOR);
    break;
   }
 }
@@ -479,7 +479,7 @@ void bmo_speak2() {
    tft.fillRoundRect((x*2)+16, (y+5)+34, 4, 12, 1, BLACK);
    
 //Lado Esquerdo   
-   tft.fillRoundRect((x*2)-1,(y*3)-9, 4, 8, 1, BLACK); //posicao inicial
+   tft.fillRoundRect((x*2),(y*3)-9, 2, 8, 1, BLACK); //posicao inicial
    tft.fillRoundRect((x*2)+1, (y*3)-8, 4, 4, 1, BLACK);  
    for(int i = 2; i<7; i = i+2)
     tft.fillRoundRect((x*2)+1+i, (y*3)-8-i, 4, 4, 1, BLACK);
@@ -500,10 +500,11 @@ void bmo_speak2() {
     tft.fillTriangle(85, 97, 70, 117, 70, 97, BLACK);
 
 //Dentes
-tft.fillRoundRect(70, 60, 6, 46, 1, WHITE);
+tft.fillRoundRect(70, 56, 6, 53, 1, WHITE);
 
 
 //Lingua
+tft.fillRoundRect(80, 65, 5, 35, 1, RED);
 }
 
 void eyes1(uint16_t x,uint16_t y,uint16_t r) {
