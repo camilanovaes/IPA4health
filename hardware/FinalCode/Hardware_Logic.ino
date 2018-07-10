@@ -65,6 +65,13 @@ unsigned long ulElapsedTime = 0;
 unsigned long ulPulseCurrentTime = 0;
 unsigned long ulPulseOldTime = 0;
 
+int TempAudioValue = 0;
+int MaxAudioValue = 0;
+int MinAudioValue = 0;
+uint32_t LastUpdate = 0;
+boolean FirstUpdate = true;
+#define UpdateAudioValue 10000
+
 #define BLACK 0x0000
 #define BMO_COLOR 0x07FA //0,63,26
 #define RED 0xF800
@@ -72,6 +79,9 @@ unsigned long ulPulseOldTime = 0;
 #define CHARCOL 0x0000
 #define TONGUE 0x4F8B //8,42,11
 #define MOUTH  0x1BA8
+
+const int analogInPin = A0;
+int outputValue = 0;
 
 void setup() {
  Serial.begin(115200);
@@ -183,13 +193,37 @@ void loop() {
    break;
 
    default:
-   tft.setRotation(0);
+    // read the analog in value:
+    outputValue = analogRead(analogInPin);
+    tft.setRotation(0);
+   if((outputValue>=(MinAudioValue-5) && outputValue<=(MaxAudioValue+5))| FirstUpdate)
     bmo_smile();
-    delay(1000);
-    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
-    bmo_speak();
-    delay(1000);
-    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+   else {
+     bmo_smile();
+     delay(500);
+     tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+     bmo_speak();
+     delay(500);
+     tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+     bmo_smile();
+   }
+   
+    if (millis()-LastUpdate > UpdateAudioValue){
+
+     for(int i; i<=100; i++){
+      TempAudioValue = analogRead(analogInPin);
+      Serial.println(TempAudioValue);
+      if (TempAudioValue > MaxAudioValue)
+        MaxAudioValue = TempAudioValue;
+
+      if (TempAudioValue < MaxAudioValue)
+        MinAudioValue = TempAudioValue;
+
+      delay(10);
+     }
+    FirstUpdate = false;
+    LastUpdate = millis();
+   }
    break;
   }
 }
