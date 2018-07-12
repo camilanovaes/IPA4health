@@ -85,6 +85,7 @@ int outputValue = 0;
 
 void setup() {
  Serial.begin(115200);
+ randomSeed(analogRead(1));
  tft.initR(INITR_BLACKTAB);
  tft.fillScreen(BMO_COLOR);
  tft.setRotation(0);
@@ -92,46 +93,51 @@ void setup() {
 
 
 void loop() {
-  char buff = Serial.read();
 
-  switch(buff) {
-   case 'i':
-    Serial.println("o");
-   break;
+char buff = Serial.read();
 
-   case 's':
-   tft.setRotation(3);
-    handleCalibration();
-    setupFinalDisplay();
-    ucScreenIndex = SCREEN_WIDTH;
-    iADC0SpanValue = (lADC0MaxValue - lADC0MinValue);
-    fScalingFactor = (float)((float)(PULSE_WINDOW_HEIGHT)/(float)ADC_MAX_VAL);
-    ulOldTime = micros();
-    iPulseTriggerLevelHigh = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.10)) + lADC0MinValue;
-    iPulseTriggerLevelLow  = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.30)) + lADC0MinValue;
+switch(buff) {
+
+case 'i':
+  Serial.println("o");
+break;
+
+case 's':
+  tft.setRotation(1);
+  handleCalibration();
+  setupFinalDisplay();
+  ucScreenIndex = SCREEN_WIDTH;
+  iADC0SpanValue = (lADC0MaxValue - lADC0MinValue);
+  fScalingFactor = (float)((float)(PULSE_WINDOW_HEIGHT)/(float)ADC_MAX_VAL);
+  ulOldTime = micros();
+  iPulseTriggerLevelHigh = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.10)) + lADC0MinValue;
+  iPulseTriggerLevelLow  = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.30)) + lADC0MinValue;
     
-     while(Serial.read() != 'f') { 
-      pox.update();
-      sensor.update();
-      ulCurrentTime = micros();
-      if (ulCurrentTime >= ulOldTime)
-       ulElapsedTime = ulCurrentTime - ulOldTime;
-      else
-       ulElapsedTime = (MAX_UL - ulOldTime) + ulCurrentTime;
+  while(Serial.read() != 'f') { 
+    pox.update();
+    sensor.update();
+    ulCurrentTime = micros();
     
-      if (ulElapsedTime >= ulSamplePeriod) {
-       ulOldTime = ulCurrentTime;
+    if (ulCurrentTime >= ulOldTime)
+      ulElapsedTime = ulCurrentTime - ulOldTime;
+    else
+      ulElapsedTime = (MAX_UL - ulOldTime) + ulCurrentTime;
+    
+    if (ulElapsedTime >= ulSamplePeriod) {
+      ulOldTime = ulCurrentTime;
 
-       sensor.getRawValues(&IR_RawSignal, &RED_RawSignal); // Read raw level from analogue input
-       iPulseValueIR = (int) (((float)IR_RawSignal) * fScalingFactor); // Scaled waveform 0-5, 0-1023 => 0-PULSE_WINDOW_HEIGHT
-       iPulseValueIR = iPulseValueIR - (PULSE_WINDOW_HEIGHT/2);
-       iPulseValueIR = iPulseValueIR + (PULSE_WINDOW_HEIGHT/2);
-       iPulseValueIR = PULSE_WINDOW_HEIGHT - iPulseValueIR;
+      sensor.getRawValues(&IR_RawSignal, &RED_RawSignal); // Read raw level from analogue input
+      iPulseValueIR = (int) (((float)IR_RawSignal) * fScalingFactor); // Scaled waveform 0-5, 0-1023 => 0-PULSE_WINDOW_HEIGHT
+      iPulseValueIR = iPulseValueIR - (PULSE_WINDOW_HEIGHT/2);
+      iPulseValueIR = iPulseValueIR + (PULSE_WINDOW_HEIGHT/2);
+      iPulseValueIR = PULSE_WINDOW_HEIGHT - iPulseValueIR;
       
-       if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
+      if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
         iBPM = pox.getHeartRate();
         Serial.println(iBPM);
         SPO2 = pox.getSpO2();
+        if(SPO2 > 100)
+          SPO2 = 100;
         tsLastReport = millis();
        }
       
@@ -172,43 +178,52 @@ void loop() {
       }
      }
     }
-    pox.shutdown();
-    tft.fillScreen(BMO_COLOR);
-   break;
+  pox.shutdown();
+  tft.fillScreen(BMO_COLOR);
+break;
 
-   default:
-    // read the analog in value:
-    outputValue = analogRead(analogInPin);
-    tft.setRotation(0);
-   if((outputValue>=(MinAudioValue-5) && outputValue<=(MaxAudioValue+5))| FirstUpdate)
+case 'n':
+  tft.fillScreen(BMO_COLOR);
+  while(Serial.read() != 'f')
+    idk();
+  tft.fillScreen(BMO_COLOR);
+break;
+
+default:
+  // read the analog in value:
+  outputValue = analogRead(analogInPin);
+  long  RandomValue = random(300);
+  tft.setRotation(2);
+  if((outputValue>=(MinAudioValue-5) && outputValue<=(MaxAudioValue+5))| FirstUpdate)
     bmo_smile();
-   else {
-     bmo_smile();
-     delay(500);
-     tft.fillRect(40, 0, 50, 159, BMO_COLOR);
-     bmo_speak();
-     delay(500);
-     tft.fillRect(40, 0, 50, 159, BMO_COLOR);
-     bmo_smile();
+    else {
+    bmo_smile();
+    delay(500);
+    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+    bmo_speak();
+    delay(500);
+    tft.fillRect(40, 0, 50, 159, BMO_COLOR);
+    bmo_smile();
    }
    
-    if (millis()-LastUpdate > UpdateAudioValue){
-
-     for(int i; i<=100; i++){
+   if (millis()-LastUpdate > UpdateAudioValue){
+   
+    for(int i; i<=100; i++){
       TempAudioValue = analogRead(analogInPin);
       if (TempAudioValue > MaxAudioValue)
         MaxAudioValue = TempAudioValue;
 
       if (TempAudioValue < MaxAudioValue)
         MinAudioValue = TempAudioValue;
-
+      
       delay(10);
      }
-    FirstUpdate = false;
-    LastUpdate = millis();
+     FirstUpdate = false;
+     LastUpdate = millis();
    }
-   break;
-  }
+break;
+}
+
 }
 
 
@@ -415,27 +430,26 @@ void bmo_smile() {
 }
 
 void idk() {
- tft.setRotation(3);
+ tft.setRotation(1);
  uint8_t tz=2;
  uint16_t v=10;
 
-  tft.drawChar(5, v, 'B', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(26, v, 'A', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(50, v, 'C', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(74, v, 'K', CHARCOL, BMO_COLOR, tz);
-  
+  tft.drawChar(5, v, 'L', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(26, v, 'O', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(50, v, 'A', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(74, v, 'D', CHARCOL, BMO_COLOR, tz);
   tft.drawChar(98, v, 'I', CHARCOL, BMO_COLOR, tz);
   tft.drawChar(115, v, 'N', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(133, v, 'G', CHARCOL, BMO_COLOR, tz);
   
-  tft.drawChar(133, v, '1', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(50, v+30, 'N', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(74, v+30, 'F', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(98, v+30, 'C', CHARCOL, BMO_COLOR, tz);
   
-  tft.drawChar(5, 42, 'M', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(29, 42, 'I', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(53, 42, 'N', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(77, 42, 'U', CHARCOL, BMO_COLOR, tz);
-  tft.drawChar(101, 42, 'T', CHARCOL, BMO_COLOR, tz);    
-  tft.drawChar(125, 42, 'E', CHARCOL, BMO_COLOR, tz);
-}
+  tft.drawChar(50, 42+30, 'T', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(74, 42+30, 'A', CHARCOL, BMO_COLOR, tz);
+  tft.drawChar(98, 42+30, 'G', CHARCOL, BMO_COLOR, tz);
+}  
 
 
 void bmo_troll() {
