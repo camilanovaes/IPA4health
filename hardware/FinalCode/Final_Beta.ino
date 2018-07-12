@@ -101,19 +101,11 @@ void loop() {
 
    case 's':
    tft.setRotation(3);
-    Serial.println("START");
     handleCalibration();
     setupFinalDisplay();
-    //Serial.println('\n');
-    //Serial.println(lADC0MinValue);
-    //Serial.println((int)lADC0MinValue);
     ucScreenIndex = SCREEN_WIDTH;
     iADC0SpanValue = (lADC0MaxValue - lADC0MinValue);
-    //Serial.println('\n');
-    //Serial.println(iADC0SpanValue);
     fScalingFactor = (float)((float)(PULSE_WINDOW_HEIGHT)/(float)ADC_MAX_VAL);
-    //Serial.println('\n');
-    //Serial.println(fScalingFactor);
     ulOldTime = micros();
     iPulseTriggerLevelHigh = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.10)) + lADC0MinValue;
     iPulseTriggerLevelLow  = ((int)(((float)(lADC0MaxValue - lADC0MinValue)) * 0.30)) + lADC0MinValue;
@@ -131,20 +123,15 @@ void loop() {
        ulOldTime = ulCurrentTime;
 
        sensor.getRawValues(&IR_RawSignal, &RED_RawSignal); // Read raw level from analogue input
-       //Serial.println(IR_RawSignal);
        iPulseValueIR = (int) (((float)IR_RawSignal) * fScalingFactor); // Scaled waveform 0-5, 0-1023 => 0-PULSE_WINDOW_HEIGHT
-       //Serial.println(iPulseValueIR);
        iPulseValueIR = iPulseValueIR - (PULSE_WINDOW_HEIGHT/2);
-       //iPulseValueIR = (int)((float)iPulseValueIR * fAmplificationFactor);
        iPulseValueIR = iPulseValueIR + (PULSE_WINDOW_HEIGHT/2);
        iPulseValueIR = PULSE_WINDOW_HEIGHT - iPulseValueIR;
-       //Serial.println(iPulseValueIR);
       
        if (millis() - tsLastReport > REPORTING_PERIOD_MS) {
         iBPM = pox.getHeartRate();
         Serial.println(iBPM);
         SPO2 = pox.getSpO2();
-        //Serial.println(SPO2);
         tsLastReport = millis();
        }
       
@@ -179,8 +166,6 @@ void loop() {
          if (ucScreenIndex < (SCREEN_WIDTH-2)) {
           tft.drawFastVLine(ucScreenIndex, 1, PULSE_WINDOW_HEIGHT - 3, ST7735_BLACK);
           tft.drawLine(ucScreenIndex-1, iPulseValueIROld, ucScreenIndex, iPulseValueIR, ST7735_GREEN); //alterar escala aki!!!!!!!
-          //Serial.println(iPulseValueIROld);
-          //Serial.println(iPulseValueIR);
          }
         }
        iPulseValueIROld = iPulseValueIR;
@@ -188,7 +173,6 @@ void loop() {
      }
     }
     pox.shutdown();
-    Serial.println("POWEROFF");
     tft.fillScreen(BMO_COLOR);
    break;
 
@@ -212,7 +196,6 @@ void loop() {
 
      for(int i; i<=100; i++){
       TempAudioValue = analogRead(analogInPin);
-      Serial.println(TempAudioValue);
       if (TempAudioValue > MaxAudioValue)
         MaxAudioValue = TempAudioValue;
 
@@ -286,11 +269,7 @@ void handleCalibration() {
   lSamplecounts = 10000L;
   
   //Start sensor Configuration
-  if (!pox.begin()) {
-        Serial.println("FAILED");
-        for(;;);
-   } else
-        Serial.println("SUCCESS");
+  pox.begin();
   pox.update();
   sensor.update();
   // Read the output of the sensor with IR applied and finger in place to determine max and min voltages at output. Used to scale the incoming waveform to ensure the
@@ -301,7 +280,6 @@ void handleCalibration() {
     
     sensor.getRawValues(&ir, &red);
     lADC0TempValue = ir; //IR RAW READ
-    //Serial.println(ir);
     
     if (lADC0TempValue > lADC0MaxValue)
       lADC0MaxValue = lADC0TempValue;
