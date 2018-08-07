@@ -13,58 +13,48 @@ class HeartRateSkill(MycroftSkill):
     # The constructor of the skill, which calls MycroftSkill's constructor
     def __init__(self):
         super(HeartRateSkill, self).__init__(name="HeartRateSkill")
-        self.ser = serial.Serial(
-            port='/dev/ttyACM0',
-            baudrate = 115200,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            bytesize=serial.EIGHTBITS,
-            timeout=1
-        )
-        self.aux = []
-        self.total = 0
-        self.med = 0
+        self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout = 1)
+        self.aux = None
+        self.total = None
+        self.med = None
         self.c = 0
-        self.read = ''
-        self.r = ''
+        self.read = None
 
     @intent_handler(IntentBuilder("").require("Heart"))
     def handle_heart_rate_intent(self, message):
-        self.speak_dialog("init.sensor")	
-        #self.ser.write(str.encode("i"))
-        #self.read = self.ser.readline().decode('utf-8')[:-2]
-        #self.read = self.ser.readline()
-        #self.r = self.read.rstrip()
-        #timeout = time.time() + 10
-        #while (time.time() < timeout):
-         #   self.r = self.read.rstrip()
-          #  if (self.r == 'o'):
-           #     self.c = 1
-            #    self.speak_dialog("started.sensor")
-             #   self.ser.write(str.encode("s"))
-                #for x in range(0,5):
-                 #   if self.read:
-                  #      for x in range(0, 5):
-                   #         self.aux.append(float(read))
-                    #        self.total += float(read)
+        self.speak_dialog("init.sensor")
+        self.ser.write(str("i").encode())  # Serial Test
+        self.read = self.ser.readline().decode('ascii')
+        timeout = time.time() + 5
+        while (time.time() < timeout):
+            if (self.read.rstrip() == 'o'):
+                self.c = 1
+                self.speak_dialog("started.sensor")
+                self.ser.write(str("s").encode())
+                break
 
-                     #   dem = len(self.aux)
-                      #  self.med = int(self.total/dem)
-                #    self.speak_dialog("heart.rate.med", data={"med": self.med})
-              #  timeout2 = time.time() + 100
-               # while (time.time() < timeout2):
-                #   pass 
-                
-  #              self.ser.write(str.encode("f"))
+                #while 1:
+                #    try:
+                #        if self.read.rstrip():
+                #            for x in range(0, 10):
+                #                self.aux.append(float(read))
+                #                self.total += float(read)
+                #
+                #            dem = len(self.aux)
+                #            self.med = int(self.total/dem)
+                #        self.speak_dialog("heart.rate.med", data={"med": self.med})
+                #
+                #    except:
+                #        self.speak_dialog("error.sensor")
+                #        break
 
-#        if (time.time() > timeout):
- #           if (self.c == 0):
-  #              self.speak_dialog("error.sensor")
-   #             self.ser.write(str.encode("f"))
+        if (time.time() > timeout):
+            if (self.c == 0):
+                self.speak_dialog("error.sensor")
 
     def stop(self):
-        self.ser.write(str.encode("f"))
-        return False
+        self.ser.write(str("f").encode())
+        return True
 
 def create_skill():
     return HeartRateSkill()
