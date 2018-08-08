@@ -5,23 +5,11 @@ import MFRC522
 import signal 
 import re
 import time
-import serial
-
-ser = serial.Serial(
-   
-    port='/dev/ttyACM0',
-    baudrate = 115200,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    bytesize=serial.EIGHTBITS,
-    timeout=1
-)
 
 continue_reading = True
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal, frame):
     global continue_reading
-    print "Ctrl+C captured, ending read."
     continue_reading = False
     GPIO.cleanup()
 # Hook the SIGINT
@@ -29,13 +17,10 @@ signal.signal(signal.SIGINT, end_read)
 # Create an object of the class MFRC522
 MIFAREReader = MFRC522.MFRC522()
 # Welcome message
-print "Welcome to the MFRC522 data read example" 
-print "Press Ctrl-C to stop."
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
 while continue_reading:
     with open('Data.txt', 'w') as arq:
         arq.write("")
-    ser.write("n".encode())
     for sector in range(15):
         for key in MFRC522.MIFARE_CLASSIC_1K_KEYS:
             # Scan for cards
@@ -52,22 +37,21 @@ while continue_reading:
                 if status == MIFAREReader.MI_OK:
                     data = MIFAREReader.MFRC522_Read(sector)
                     # Print sector data
+                    print(data)
                     SetorAtual = data.get('sector')
-		    DadosSetor = data.get('data')
-	            aux = DadosSetor
+                    DadosSetor = data.get('data')
+                    aux = DadosSetor
                     aux = aux.replace("[","")
                     aux = aux.replace("]","")
                     aux_list = aux.split(',')
                     results = [int(i) for i in aux_list]
-                    #print results
                     new_string = [chr(x) for x in results]
                     for x in new_string:
+                        print(x)
                         if (SetorAtual != 0):
                             if re.match("^[a-zA-Z0-9_:]*$", x):
                                 with open('Data.txt', 'a') as arq:
                                     arq.write(x)
-                            print x
           
                     MIFAREReader.MFRC522_StopCrypto1()
-    ser.write("f".encode())
     break
