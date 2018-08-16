@@ -32,9 +32,10 @@ int MinAudioValue = 0;   //
 uint32_t LastUpdate = 0; //
 boolean FirstUpdate = true;  //
 boolean StartUpdate = false; //
+int FirstSamples = 0;  //
 int outputValue = 0;   //
 #define analogInPin A0 //
-#define UpdateAudioValue 10000 //
+#define UpdateAudioValue 5000 //
 #define REPORTING_PERIOD_MS 1000 // Periodo de amostragem, em milissegundos
 #define BMO_COLOR 0x07FA //0,63,26
 const unsigned char BMO_Blink [] PROGMEM = {
@@ -724,11 +725,13 @@ void setup()
   tft.setRotation(1);
   tft.setTextSize(2);
   tft.setTextColor(ST7735_BLACK);
-  tft.setCursor(10, 30);
-  tft.println("INITIALIZING");
-  tft.setCursor(45, 65);
-  tft.println("SYSTEM");
-  delay(2000);
+  //while(Serial.read() != 'f'){
+    tft.setCursor(10, 30);
+    tft.println("INITIALIZING");
+    tft.setCursor(45, 65);
+    tft.println("SYSTEM");
+  //}
+  delay(20000);
   tft.fillScreen(BMO_COLOR);
 }
 
@@ -744,6 +747,9 @@ void loop()
       if(StartUpdate){
         setupFinalDisplay();
         sensor.resetFifo();
+      }else{
+        ErrorScreen();
+        delay(3000);
       }
       while(Serial.read() != 'f' && StartUpdate) { 
         pox.update();
@@ -754,24 +760,28 @@ void loop()
           if (SPO2 >= 100)
             SPO2 = 100;
           tsLastReport = millis();
+          FirstSamples++;
         }
-        if (((iBPM != iBPMOld) && (iBPM < UPPER_PULSE_RATE)) | (SPO2 != SPO2Old)) {
-          if(iBPM >= 100)
-            UpdateValues(60, 30, iBPMOld, iBPM, 20);
-          else if(iBPM >= 10)
-            UpdateValues(70, 30, iBPMOld, iBPM, 20);
-          else
-            UpdateValues(80, 30, iBPMOld, iBPM, 20);
-          if(SPO2 >= 100)  
-            UpdateValues(60, 85, SPO2Old, SPO2, 75);
-          else if(SPO2 >= 10)  
-            UpdateValues(75, 85, SPO2Old, SPO2, 75);
-          else  
-            UpdateValues(85, 85, SPO2Old, SPO2, 75);
-          iBPMOld = iBPM;
-          SPO2Old = SPO2;
+        if(FirstSamples > 8){
+          if (((iBPM != iBPMOld) && (iBPM < UPPER_PULSE_RATE)) | (SPO2 != SPO2Old)) {
+            if(iBPM >= 100)
+              UpdateValues(60, 30, iBPMOld, iBPM, 20);
+            else if(iBPM >= 10)
+              UpdateValues(70, 30, iBPMOld, iBPM, 20);
+            else
+              UpdateValues(80, 30, iBPMOld, iBPM, 20);
+            if(SPO2 >= 100)  
+              UpdateValues(60, 85, SPO2Old, SPO2, 75);
+            else if(SPO2 >= 10)  
+              UpdateValues(75, 85, SPO2Old, SPO2, 75);
+            else  
+              UpdateValues(85, 85, SPO2Old, SPO2, 75);
+            iBPMOld = iBPM;
+            SPO2Old = SPO2;
+          }
         }
       }
+      FirstSamples = 0;
       pox.shutdown();
       tft.fillScreen(BMO_COLOR);
     break;
@@ -860,9 +870,6 @@ boolean handleCalibration()
   //Start sensor Configuration
   if (!pox.begin()) {
     Serial.println("FAILED");
-    ErrorScreen();
-    delay(3000);
-    return false;
   } else{
     Serial.println("SUCCESS");
     SensorOK = true;
@@ -879,7 +886,7 @@ boolean handleCalibration()
     tft.println(cCountDown);
     iCountDown--;
   };
-  return true;
+  return SensorOK;
 }
 
 void setupCalibrateDisplay1() 
@@ -905,13 +912,18 @@ void setupCalibrateDisplay1()
 
 void setupFinalDisplay() 
 {
+  //ADICIONAR RETANGULOS -- --
   tft.fillScreen(ST7735_BLACK);
   tft.drawBitmap(10, 20, Heart, 40, 40, ST7735_RED);
+  tft.fillRect(60, 40, 20, 5, ST7735_YELLOW);//ALTERAR POSICAO E TAMANHO  tft.fillRect(x, y, w, h, color)
+  tft.fillRect(90, 40, 20, 5, ST7735_YELLOW);//ALTERAR POSICAO E TAMANHO
   tft.setTextColor(ST7735_CYAN);
   tft.setTextSize(2);
   tft.setCursor(120,40);
   tft.println("BPM");
   tft.drawBitmap(10, 70, Oxygen, 40, 40, ST7735_GREEN);
+  tft.fillRect(60, 90, 20, 5, ST7735_YELLOW);//ALTERAR POSICAO E TAMANHO
+  tft.fillRect(90, 90, 20, 5, ST7735_YELLOW);//ALTERAR POSICAO E TAMANHO
   tft.setCursor(130,90);
   tft.println("%");
 }
